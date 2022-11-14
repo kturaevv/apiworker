@@ -1,10 +1,13 @@
 from fastapi import FastApi, Depends
 from sqlalchemy.orm import Session
+
 from app.models import models, engine, Session
+from app.manager import ConnManager
+from app.crud import CRUD
 
 # Dependency
 def get_db():
-    db = Session()
+    db = ConnManager().session
     try:
         yield db
     finally:

@@ -1,16 +1,18 @@
 from sqlalchemy import  Column, ForeignKey, Integer, String, Table, Identity, select
 from sqlalchemy.orm import relationship
 
-from manager import ConnManager
+from .manager import ConnManager
 
-Base = ConnManager(echo=True).Base
+Base = ConnManager().Base
 
-product_category = Table(
-    "product_category",
-    Base.metadata,
-    Column("product_pk", ForeignKey("product_table.id")),
-    Column("category_pk", ForeignKey("category_table.id")),
-)
+class ProductCategory(Base):
+    __tablename__ = "product_category"
+    id = Column(Integer, primary_key=True)
+    product_pk = Column(ForeignKey("product_table.id"))
+    category_pk = Column(ForeignKey("category_table.id"))
+
+    products = relationship("Product", back_populates="categories")
+    categories = relationship("Category", back_populates="products")
 
 
 class Product(Base):
@@ -19,7 +21,7 @@ class Product(Base):
     value = Column(String)
     
     categories = relationship(
-        "Category", secondary=product_category, back_populates="products"
+        "ProductCategory", back_populates="products"
     )
 
 
@@ -29,5 +31,5 @@ class Category(Base):
     value = Column(String)
     
     products = relationship(
-        "Product", secondary=product_category, back_populates="categories"
+        "ProductCategory", back_populates="categories"
     )
