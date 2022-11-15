@@ -22,7 +22,7 @@ class CRUD:
                 
         faker = Faker()
 
-        products = [models.Product(value=faker.catch_phrase()) for _ in range(n_products)]
+        products = [models.Product(value=faker.catch_phrase()) for i in range(n_products)]
         categories = [models.Category(value=category) for category in categories]
         
         self.session.bulk_save_objects(products + categories) # deprecated
@@ -36,20 +36,21 @@ class CRUD:
 
         m2m = []
         # Assign category to each product, except for last 30%
-        for product in products[:-len(products) * 3 // 10]:
+        for product in products[2:-len(products) * 3 // 10]:
             # Each product shall have at least 1 and at most 3 categories
-            for _ in range(random.randint(1, 3)):
+            for category in set(random.choices(categories, k=len(categories))):
                 m2m.append(
                     models.ProductCategory(
                         product_pk=product.id,
-                        category_pk=random.choice(categories).id
+                        category_pk=category.id
+                        )
                     )
-                )
-        # Add empty category
-        empty_category = models.Category(value="EmptyCategory")
-        m2m.append(empty_category)
-
+                
         self.session.bulk_save_objects(m2m)
+        self.session.commit()
+
+        empty_category = models.Category(value="EmptyCategory")
+        self.session.add(empty_category)
         self.session.commit()
 
     def get_products(self) -> list[models.Product]:
@@ -61,9 +62,5 @@ class CRUD:
         return result.scalars().all()
 
     def get_products_and_categories(self):
-        ...
-
-# ConnManager().define_tables()
-# CRUD()._fake_populate_products_categories()
-# CRUD()._fake_populate_junction_table()
-# ConnManager().drop_tables()
+        result = self.session.execute(select(models.ProductCategory))
+        return result.scalars().all()

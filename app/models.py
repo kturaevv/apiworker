@@ -1,9 +1,8 @@
 from sqlalchemy import  Column, ForeignKey, Integer, String, Table, Identity, select
 from sqlalchemy.orm import relationship
 
-from .manager import ConnManager
+from .default_connection import Base
 
-Base = ConnManager().Base
 
 class ProductCategory(Base):
     __tablename__ = "product_category"

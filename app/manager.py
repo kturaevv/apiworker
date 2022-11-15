@@ -29,6 +29,7 @@ class SingletonMeta(type):
 class ConnManager(metaclass=SingletonMeta):
     
     def __init__(self, echo=False, test=False) -> None:
+        print(self.__module__)
         print("Initializing database connection...")
         if test == False and settings.host != 'localhost':
             raise ValueError("Trying to connect to remote DB instance for test. Connect locally instead.")
@@ -46,19 +47,19 @@ class ConnManager(metaclass=SingletonMeta):
             from sqlalchemy.schema import CreateSchema
             if not self.engine.dialect.has_schema(self.engine, self.test_schema):
                 self.engine.execute(CreateSchema(self.test_schema))
-            self.Base = declarative_base(bind=self.engine)
+            self.Base = declarative_base()
             self.Base.metadata.schema = self.test_schema
         else:
-            self.Base = declarative_base(bind=self.engine)
+            self.Base = declarative_base()
 
     def define_tables(self):
-        self.Base.metadata.create_all()
+        self.Base.metadata.create_all(bind=self.engine)
     
     def drop_tables(self):
         close_all_sessions()
-        self.Base.metadata.drop_all()
+        self.Base.metadata.drop_all(bind=self.engine)
 
-    def close_sessions(self):
+    def close_all(self):
         close_all_sessions()
 
 
@@ -81,6 +82,3 @@ class TestPrefixerMeta(DeclarativeMeta):
                     fk = i.foreign_keys.pop()
                     fk._colspec = 'test_' + fk._colspec
         return super().__init__(name, bases, dict_)
-
-conn = ConnManager()
-Base = conn.Base
