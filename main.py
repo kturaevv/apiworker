@@ -1,28 +1,32 @@
-from fastapi import FastApi, Depends
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
 
-from app.models import models, engine, Session
 from app.manager import ConnManager
 from app.crud import CRUD
+from app import schemas
 
-# Dependency
-def get_db():
-    db = ConnManager().session
-    try:
-        yield db
-    finally:
-        db.close()
+app = FastAPI()
+crud = CRUD()
 
-app = FastApi()
+@app.on_event("startup")
+def startup():
+    ConnManager().define_tables()
+    crud._fake_populate_products_categories()
+    crud._fake_populate_junction_table()
+    print("STARTUP")
 
-@app.get('/products')
-def get_products(db: Session = Depends(get_db)):
-    ...
+@app.on_event("shutdown")
+def shutdown():
+    ConnManager().drop_tables()
+    print("SHUTDOWN")
 
-@app.get('/categories')
-def get_categories(db: Session = Depends(get_db)):
-    ...
+@app.get('/products', response_model=list[schemas.Product])
+def get_products_and_its_categories():
+    return crud.get_products()
 
-@app.get('/both')
-def get_products_and_categories(db: Session = Depends(get_db)):
-    ...
+@app.get('/categories', response_model=list[schemas.Category])
+def get_categories_and_its_products():
+    return crud.get_categories()
+
+@app.get('/both', response_model=list[schemas.ProductCategory])
+def get_product_category_pairs():
+    return crud.get_products_and_categories()

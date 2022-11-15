@@ -1,11 +1,14 @@
 from bucket_generator import generate_session_id
 
-from app.models import Product, Category
 from app.manager import ConnManager
 from app.crud import CRUD
-from app import schema
+from app import schemas, models
+
+from main import app
 
 from datetime import datetime, timedelta
+
+from fastapi.testclient import TestClient
 
 import pytest
 
@@ -17,23 +20,25 @@ def queries() -> CRUD:
     yield CRUD()
     ConnManager().drop_tables()
 
-def test_crud_populate(queries):
+def test_crud_populate(queries: CRUD):
     queries._fake_populate_products_categories(n_products = 10)
     queries._fake_populate_junction_table()
     assert len(queries.get_products()) == 10, queries.get_products()
 
-def test_crud_get_products(queries):
+def test_crud_get_products(queries: CRUD):
     q = queries.get_products()
     assert type(q) is list
-    assert type(q[0]) == Product
+    assert type(q[0]) == models.Product
 
-def test_crud_get_categories(queries):
+def test_crud_get_categories(queries: CRUD):
     q = queries.get_categories()
     assert type(q) is list
-    assert type(q[0]) == Category
-    
-def test_api():
-    ...
+    assert type(q[0]) == models.Category
+
+def test_crud_get_products_categories(queries: CRUD):
+    q = queries.get_products_and_categories()
+    assert type(q) is list
+    assert type(q[0]) == models.ProductCategory
 
 def test_bucket_generator():
     # Should have same session id
@@ -60,5 +65,10 @@ def test_bucket_generator_2():
                 (t + timedelta(minutes=minute)).timestamp()
             )
         )
-    
     assert len(session_ids) == 60
+
+def test_api():
+    client = TestClient(app)
+    assert client.get('/products').status_code == 200
+    assert client.get('/categories').status_code == 200
+    assert client.get('/both').status_code == 200
