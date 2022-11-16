@@ -6,14 +6,14 @@ Unique session id generation with pandas can be found at [session_id.ipynb](sess
 ---
 
  Project can be started with docker compose:
-```powershell
+```sh
 # Copy env variables for compose
 cat .env.compose > .env
 docker compose up -d --build
 ```
 
  Project can be started locally with postgres in separate container:
-```powershell
+```sh
 # Copy env variables for local deployment
 cat .env.local > .env
 
