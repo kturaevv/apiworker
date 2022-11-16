@@ -27,14 +27,14 @@ class SingletonMeta(type):
 
 
 class ConnManager(metaclass=SingletonMeta):
-    
+
     def __init__(self, echo=False, test=False) -> None:
         self.conn_url = "postgresql://{username}:{password}@{host}:{port}/{database}".format(
-            username = settings.username,
-            password = settings.password,
-            host = settings.host,
-            port = settings.port,
-            database = settings.database
+            username=settings.username,
+            password=settings.password,
+            host=settings.host,
+            port=settings.port,
+            database=settings.database
         )
         self.engine = create_engine(self.conn_url, echo=echo)
         self.session = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)()
@@ -50,12 +50,12 @@ class ConnManager(metaclass=SingletonMeta):
 
     def drop_tables_if_exist(self):
         tables = inspect(self.engine).get_table_names()
-        if tables: # if it is not empty
+        if tables:  # if it is not empty
             self.drop_tables()
-            
+
     def define_tables(self):
         self.Base.metadata.create_all(bind=self.engine)
-    
+
     def drop_tables(self):
         close_all_sessions()
         self.Base.metadata.drop_all(bind=self.engine)
@@ -71,6 +71,7 @@ class TestPrefixerMeta(DeclarativeMeta):
         Does not apply to Table(...) M2M junction table objects.
         TODO finish later
     """
+
     def __init__(cls, name, bases, dict_):
         if '__tablename__' in dict_:
 

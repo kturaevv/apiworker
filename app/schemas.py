@@ -9,11 +9,13 @@ class ProductBase(BaseModel):
     class Config:
         orm_mode = True
 
+
 class CategoryBase(BaseModel):
     value: str
 
     class Config:
         orm_mode = True
+
 
 class Product(BaseModel):
     value: str
@@ -26,16 +28,18 @@ class Product(BaseModel):
     class Config:
         orm_mode = True
 
+
 class Category(BaseModel):
     value: str
     products: list[object]
-    
+
     @validator('products', each_item=True)
     def retrieve_all_products(cls, v: models.ProductCategory):
         return v.products.value
 
     class Config:
         orm_mode = True
+
 
 class ProductCategory(BaseModel):
     products: object = Field(..., alias="product")

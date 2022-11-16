@@ -13,18 +13,18 @@ class CRUD:
         self.session = ConnManager().session
 
     def _fake_populate_products_categories(
-            self, 
-            n_products: int = 30, 
+            self,
+            n_products: int = 30,
             categories: list[str] = ['Category_A', 'Category_B', 'Category_C', 'Category_D']
-        ) -> None:
+    ) -> None:
         from faker import Faker
-                
+
         faker = Faker()
 
         products = [models.Product(value=faker.catch_phrase()) for i in range(n_products)]
         categories = [models.Category(value=category) for category in categories]
-        
-        self.session.bulk_save_objects(products + categories) # deprecated
+
+        self.session.bulk_save_objects(products + categories)  # deprecated
         self.session.commit()
 
     def _fake_populate_junction_table(self):
@@ -42,9 +42,9 @@ class CRUD:
                     models.ProductCategory(
                         product_pk=product.id,
                         category_pk=category.id
-                        )
                     )
-                
+                )
+
         self.session.bulk_save_objects(m2m)
         self.session.commit()
 

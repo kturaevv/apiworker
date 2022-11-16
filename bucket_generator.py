@@ -8,7 +8,8 @@ from functools import lru_cache
 def generate_session_id(timestamp) -> int:
     vals = _get_timestamp_values(timestamp)
     return _generate_session_timeuuid(*vals)
-    
+
+
 def _get_session_start_minute(minute) -> int:
     """ Returns 3 minute session start time for unique id generation. """
 
@@ -18,10 +19,12 @@ def _get_session_start_minute(minute) -> int:
         return minute - 1
     else:
         return minute - 2
-    
+
+
 def _get_timestamp_values(timestamp: float) -> tuple:
     _now = datetime.datetime.fromtimestamp(timestamp)
     return _now.year, _now.month, _now.day, _now.hour, _get_session_start_minute(_now.minute)
+
 
 @lru_cache(maxsize=1)
 def _generate_session_timeuuid(*args: int) -> int:
@@ -44,8 +47,8 @@ def _generate_session_timeuuid(*args: int) -> int:
     if len(args) != 5:
         raise ValueError(
             "Input should be 5 value tuple: year - month - day - hour - minute"
-            )
-            
+        )
+
     (year, month, day, hour, minute) = args
 
     if not 0 <= year < 1 << 12:
@@ -58,9 +61,10 @@ def _generate_session_timeuuid(*args: int) -> int:
         raise ValueError('field 4 out of range (need an 8-bit value)')
     if not 0 <= minute < 1 << 6:
         raise ValueError('field 5 out of range (need an 8-bit value)')
-    
-    int_ = ( year << 20 | month << 16 | day << 11 | hour << 6 | minute)
+
+    int_ = (year << 20 | month << 16 | day << 11 | hour << 6 | minute)
     return int_
+
 
 if __name__ == "__main__":
     ts = datetime.datetime.now().timestamp()
