@@ -1,9 +1,7 @@
 """ Module for 3 minute session id generation. """
 
 import datetime
-import random
 
-from uuid import UUID
 from functools import lru_cache
 
 

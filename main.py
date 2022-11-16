@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from app.manager import ConnManager
-from app.crud import CRUD
 from app import schemas
+from app.crud import CRUD
+from app.manager import ConnManager
 
 app = FastAPI()
 crud = CRUD()

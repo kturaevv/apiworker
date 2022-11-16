@@ -1,5 +1,7 @@
 from pydantic import BaseModel, validator, Field
+
 from . import models
+
 
 class ProductBase(BaseModel):
     value: str

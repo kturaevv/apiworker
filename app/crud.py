@@ -2,9 +2,8 @@ import random
 
 from sqlalchemy import select
 
-from .manager import ConnManager
-
 from . import models
+from .manager import ConnManager
 
 
 class CRUD:

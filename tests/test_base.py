@@ -1,16 +1,13 @@
-from bucket_generator import generate_session_id
-
-from app.manager import ConnManager
-from app.crud import CRUD
-from app import schemas, models
-
-from main import app
-
 from datetime import datetime, timedelta
 
+import pytest
 from fastapi.testclient import TestClient
 
-import pytest
+from app import models
+from app.crud import CRUD
+from app.manager import ConnManager
+from bucket_generator import generate_session_id
+from main import app
 
 
 @pytest.fixture(scope='session', autouse=True)

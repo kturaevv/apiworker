@@ -4,8 +4,8 @@
     so no matter where connection is inited the connection will be the same. 
 """
 
-from sqlalchemy.orm import declarative_base, close_all_sessions, sessionmaker, DeclarativeMeta
 from sqlalchemy import create_engine, inspect
+from sqlalchemy.orm import declarative_base, close_all_sessions, sessionmaker, DeclarativeMeta
 
 from . import config
 
@@ -74,7 +74,7 @@ class TestPrefixerMeta(DeclarativeMeta):
     def __init__(cls, name, bases, dict_):
         if '__tablename__' in dict_:
 
-            from sqlalchemy.sql.schema import ForeignKeyConstraint, ForeignKey, Column
+            from sqlalchemy.sql.schema import Column
             cls.__tablename__ = dict_['__tablename__'] = \
                 'test_' + dict_['__tablename__']
 

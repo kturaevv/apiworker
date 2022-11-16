@@ -1,10 +1,11 @@
+import csv
 import datetime
-import pandas as pd
 import random
 import sys
-import csv
-
 from uuid import uuid4
+
+import pandas as pd
+
 
 def _random_timestamp():
     hour = random.randint(0,23)
