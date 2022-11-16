@@ -5,7 +5,7 @@
 """
 
 from sqlalchemy.orm import declarative_base, close_all_sessions, sessionmaker, DeclarativeMeta
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 
 from . import config
 
@@ -29,15 +29,11 @@ class SingletonMeta(type):
 class ConnManager(metaclass=SingletonMeta):
     
     def __init__(self, echo=False, test=False) -> None:
-        print(self.__module__)
-        print("Initializing database connection...")
-        if test == False and settings.host != 'localhost':
-            raise ValueError("Trying to connect to remote DB instance for test. Connect locally instead.")
-
-        self.conn_url = "postgresql://{username}:{password}@{host}:5435/{database}".format(
+        self.conn_url = "postgresql://{username}:{password}@{host}:{port}/{database}".format(
             username = settings.username,
             password = settings.password,
             host = settings.host,
+            port = settings.port,
             database = settings.database
         )
         self.engine = create_engine(self.conn_url, echo=echo)
@@ -52,6 +48,11 @@ class ConnManager(metaclass=SingletonMeta):
         else:
             self.Base = declarative_base()
 
+    def drop_tables_if_exist(self):
+        tables = inspect(self.engine).get_table_names()
+        if tables: # if it is not empty
+            self.drop_tables()
+            
     def define_tables(self):
         self.Base.metadata.create_all(bind=self.engine)
     
@@ -81,4 +82,4 @@ class TestPrefixerMeta(DeclarativeMeta):
                 if type(i) == Column and i.foreign_keys:
                     fk = i.foreign_keys.pop()
                     fk._colspec = 'test_' + fk._colspec
-        return super().__init__(name, bases, dict_)
+        super().__init__(name, bases, dict_)

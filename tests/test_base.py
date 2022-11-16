@@ -16,6 +16,7 @@ import pytest
 @pytest.fixture(scope='session', autouse=True)
 def queries() -> CRUD:
     # INIT db and destroy all data / tables after.
+    ConnManager().drop_tables_if_exist()
     ConnManager().define_tables()
     yield CRUD()
     ConnManager().drop_tables()

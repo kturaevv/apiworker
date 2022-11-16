@@ -9,15 +9,14 @@ crud = CRUD()
 
 @app.on_event("startup")
 def startup():
+    ConnManager().drop_tables_if_exist()
     ConnManager().define_tables()
     crud._fake_populate_products_categories()
     crud._fake_populate_junction_table()
-    print("STARTUP")
 
 @app.on_event("shutdown")
 def shutdown():
     ConnManager().drop_tables()
-    print("SHUTDOWN")
 
 @app.get('/products', response_model=list[schemas.Product])
 def get_products_and_its_categories():
