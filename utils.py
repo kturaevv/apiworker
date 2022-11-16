@@ -1,14 +1,14 @@
 import datetime
 import pandas as pd
-import numpy as np
+import random
 import sys
 import csv
 
 from uuid import uuid4
 
 def _random_timestamp():
-    hour = np.random.randint(0,23)
-    minute  = np.random.randint(0,59)
+    hour = random.randint(0,23)
+    minute = random.randint(0,59)
     dt = datetime.datetime(2022, 11, 11, hour, minute)
     return datetime.datetime.timestamp(dt)
 
@@ -16,7 +16,7 @@ def fake_data():
     """ Fake data for Pandas dataframe with columns ['customer_id', 'product_id', 'timestamp']"""
     return {
         "customer_id":uuid4(),
-        "product_id": np.random.randint(1,1000),
+        "product_id": random.randint(1,1000),
         "timestamp": _random_timestamp()
     }
 

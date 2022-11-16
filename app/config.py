@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     username: str = Field(..., env='POSTGRES_USERNAME')
     password: str = Field(..., env='POSTGRES_PASSWORD')
     host: str = Field(..., env='POSTGRES_HOST')
+    port: str = Field(..., env='POSTGRES_PORT')
 
     class Config:
         env_file = '.env'
