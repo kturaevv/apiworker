@@ -10,6 +10,16 @@ Unique session id generation with pandas can be found at [session_id.ipynb](sess
 # Copy env variables for compose
 cat .env.compose > .env
 docker compose up -d --build
+
+# Default docker compose includes only database and application
+# To include RabbitMQ and Celery workers ->
+docker compose \
+    -f docker-compose.yml \
+    -f docker-compose.local.yml \
+    -f docker-compose.final.yml \
+    --env-file=.env.compose up -d --build 
+
+# or use make command, refer to Makefile for details.
 ```
 
  Project can be started locally with postgres in separate container:
@@ -33,5 +43,5 @@ pip install -r requirements.txt
 # Start app
 uvicorn main:app --reload
 
-# Test with 
+# Test with (only with local deployment) 
 pytest

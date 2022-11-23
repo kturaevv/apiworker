@@ -6,8 +6,12 @@ from fastapi.testclient import TestClient
 from app import models
 from app.crud import CRUD
 from app.manager import ConnManager
+
 from bucket_generator import generate_session_id
+
 from main import app
+
+from celery import Celery
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -77,3 +81,13 @@ def test_api():
     assert client.get('/products').status_code == 200
     assert client.get('/categories').status_code == 200
     assert client.get('/both').status_code == 200
+
+
+def test_celery():
+    celery = Celery(
+        'tasks', 
+        backend='rpc://', 
+        broker=f'pyamqp://localhost:5672',
+    )
+    in_ = 1
+    assert celery.send_task("test", (in_,)).get(timeout=5) == {"Success": in_}

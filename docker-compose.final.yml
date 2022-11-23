@@ -1,0 +1,8 @@
+services:    
+    app: 
+        depends_on:
+            - rabbitmq
+            - celery
+        environment:
+            - RABBITMQ_HOST
+            - RABBITMQ_PORT

@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     host: str = Field(..., env='POSTGRES_HOST')
     port: str = Field(..., env='POSTGRES_PORT')
 
+    rabbitmq_host: str = Field(..., env='RABBITMQ_HOST')
+    rabbitmq_port: str = Field(..., env='RABBITMQ_PORT')
+    
     class Config:
         env_file = '.env'
 
