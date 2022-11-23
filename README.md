@@ -43,5 +43,6 @@ pip install -r requirements.txt
 # Start app
 uvicorn main:app --reload
 
-# Test with
+# Test with (only with local deployment)
+# as non-primary files are .dockerignored
 pytest
