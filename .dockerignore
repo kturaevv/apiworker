@@ -4,7 +4,8 @@
 **/*.md
 **/*.bak
 **/*.pdf
-Dockerfile*
+*Dockerfile*
+docker-compose.*
 radiance*
 tests
 docs
