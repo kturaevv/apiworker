@@ -12,6 +12,8 @@ services:
             - app-net
         depends_on:
             - postgresdb
+            - rabbitmq
+            - celery
         ports:
             - '8000:8000'
         environment:
@@ -20,13 +22,15 @@ services:
             - POSTGRES_PASSWORD
             - POSTGRES_HOST
             - POSTGRES_PORT
+            - RABBITMQ_HOST
+            - RABBITMQ_PORT
 
     postgresdb:
         container_name: postgres
-        image: postgres
+        image: postgres:15-alpine
         networks:
             - app-net
-        volumes:
+        volumes: 
             - sample_db:/var/lib/postgresql/data
         ports:
             - '5435:5432'
@@ -34,6 +38,33 @@ services:
             - POSTGRES_USERNAME
             - POSTGRES_PASSWORD
             - POSTGRES_DATABASE
+
+    rabbitmq:
+        hostname: my-rabbit
+        container_name: rabbit
+        image: rabbitmq:3-alpine
+        networks:
+            - app-net
+        ports:
+            - '5672:5672'
+            - '15672:15672'
+        volumes:
+            - "./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf"
+      
+    celery:
+        build:
+            context: ./worker
+            dockerfile: celery.Dockerfile
+        container_name: worker
+        networks:
+            - app-net
+        depends_on:
+            - rabbitmq
+        environment:
+            - RABBITMQ_HOST=rabbitmq
+            - RABBITMQ_PORT=5672
+            - RABBITMQ_USERNAME=guest
+            - RABBITMQ_PASSWORD=guest
 
 volumes:
     sample_db:

@@ -7,28 +7,16 @@ Unique session id generation with pandas can be found at [session_id.ipynb](sess
 
  Project can be started with docker compose:
 ```sh
-# Copy env variables for compose
-cat .env.compose > .env
-docker compose up -d --build
-
-# Default docker compose includes only database and application
-# To include RabbitMQ and Celery workers ->
-docker compose \
-    -f docker-compose.yml \
-    -f docker-compose.local.yml \
-    -f docker-compose.final.yml \
-    --env-file=.env.compose up -d --build 
-
-# or use make command, refer to Makefile for details.
+make up
 ```
 
- Project can be started locally with postgres in separate container:
+Application might be started locally as well, with all other services running in containers.
 ```sh
 # Copy env variables for local deployment
 cat .env.local > .env
 
-# Start DB container
-docker compose -f docker-compose.local.yml up -d 
+# Start DB containers
+make local
 
 # Init project env
 # With conda

@@ -1,50 +1,6 @@
 version: '3'
 
 services:
-    postgresdb:
-        container_name: postgres
-        image: postgres:15-alpine
-        networks:
-            - app-net
-        volumes: 
-            - sample_db:/var/lib/postgresql/data
-        ports:
-            - '5435:5432'
-        environment:
-            - POSTGRES_USERNAME
-            - POSTGRES_PASSWORD
-            - POSTGRES_DATABASE
-
-    rabbitmq:
-        hostname: my-rabbit
-        container_name: rabbit
-        image: rabbitmq:3-alpine
-        networks:
-            - app-net
-        ports:
-            - '5672:5672'
-            - '15672:15672'
-        volumes:
-            - "./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf"
-      
-    celery:
-        build:
-            context: ./worker
-            dockerfile: celery.Dockerfile
-        container_name: worker
-        networks:
-            - app-net
-        depends_on:
-            - rabbitmq
-        environment:
-            - RABBITMQ_HOST=rabbitmq
-            - RABBITMQ_PORT=5672
-            - RABBITMQ_USERNAME=guest
-            - RABBITMQ_PASSWORD=guest
-
-volumes:
-    sample_db:
-
-networks:
-    app-net:
-        driver: bridge
+    app:
+        deploy:
+            replicas: 0
