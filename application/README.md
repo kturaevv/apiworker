@@ -1,7 +1,3 @@
-## Session id generation
----
-Unique session id generation with pandas can be found at [session_id.ipynb](session_id.ipynb). For more details look at [bucket_generator.py](bucket_generator.py)
-
 ## Sample FastApi - Postgres project.
 ---
 

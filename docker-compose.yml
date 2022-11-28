@@ -3,41 +3,12 @@ version: '3'
 services:
 
     app:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        container_name: app
-        command: [ "./entrypoint-local.sh" ]
-        networks:
-            - app-net
         depends_on:
-            - postgresdb
             - rabbitmq
             - celery
-        ports:
-            - '8000:8000'
         environment:
-            - POSTGRES_DATABASE
-            - POSTGRES_USERNAME
-            - POSTGRES_PASSWORD
-            - POSTGRES_HOST
-            - POSTGRES_PORT
             - RABBITMQ_HOST
             - RABBITMQ_PORT
-
-    postgresdb:
-        container_name: postgres
-        image: postgres:15-alpine
-        networks:
-            - app-net
-        volumes: 
-            - sample_db:/var/lib/postgresql/data
-        ports:
-            - '5435:5432'
-        environment:
-            - POSTGRES_USERNAME
-            - POSTGRES_PASSWORD
-            - POSTGRES_DATABASE
 
     rabbitmq:
         hostname: my-rabbit
@@ -65,9 +36,6 @@ services:
             - RABBITMQ_PORT=5672
             - RABBITMQ_USERNAME=guest
             - RABBITMQ_PASSWORD=guest
-
-volumes:
-    sample_db:
 
 networks:
     app-net:
